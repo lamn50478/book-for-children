@@ -71,11 +71,9 @@ const expressSession = require('express-session');
 const MongoStore = require('connect-mongo');
 const moment = require('moment');
 
-// ── Env ────────────────────────────────────────────────────
 require('dotenv').config();
 const port = process.env.PORT || 3000;
 
-// ── Internal modules ───────────────────────────────────────
 const systemConfig = require('./config/system.js');
 const routerAdmin = require('./routers/admin/index.route.js');
 const router = require('./routers/client/route_index');
@@ -125,21 +123,23 @@ router(app);
 routerAdmin(app);
 
 // ── 404 handler ────────────────────────────────────────────
-app.use((req, res) => {
-  res.status(404).render('client/pages/errors/404.pug', {
-    pageTitle: 'Không tìm thấy trang',
+// app.use((req, res) => {
+//   res.status(404).render('client/pages/errors/404.pug', {
+//     pageTitle: 'Không tìm thấy trang',
+//   });
+// });
+
+// // ── Global error handler ───────────────────────────────────
+// app.use((err, req, res, next) => {
+//   console.error('❌ Server error:', err.stack);
+//   res.status(500).send('Server error: ' + err.message);
+// });
+
+// ── Local dev: listen | Vercel: export ─────────────────────
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`✅ Server đang chạy tại http://localhost:${port}`);
   });
-});
-
-// ── Global error handler ───────────────────────────────────
-app.use((err, req, res, next) => {
-  console.error('❌ Server error:', err.stack);
-  res.status(500).send('Server error: ' + err.message);
-});
-
-// ── Start server ───────────────────────────────────────────
-app.listen(port, () => {
-  console.log(`✅ Server đang chạy tại http://localhost:${port}`);
-});
+}
 
 module.exports = app;
