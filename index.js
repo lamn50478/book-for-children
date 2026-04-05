@@ -88,16 +88,16 @@ database.connect().catch(err => {
 });
 
 // ── Cookie & Session ───────────────────────────────────────
-app.use(cookieParser(process.env.SESSION_SECRET));
+app.use(cookieParser('12345'));
 app.use(expressSession({
-  secret: process.env.SESSION_SECRET || 'fallback_secret',
+  secret: '12345',
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: process.env.MONGO_URI,
-    ttl: 60 * 60, // 1 giờ
+    mongoUrl: process.env.MONGO_URL,
+    ttl: 60 * 60,
   }),
-  cookie: { maxAge: 60 * 60 * 1000 }, // 1 giờ
+  cookie: { maxAge: 60000 },
 }));
 app.use(flash());
 
@@ -125,25 +125,21 @@ router(app);
 routerAdmin(app);
 
 // ── 404 handler ────────────────────────────────────────────
-// app.use((req, res) => {
-//   res.status(404).render('client/pages/errors/404.pug', {
-//     pageTitle: 'Không tìm thấy trang',
-//   });
-// });
+app.use((req, res) => {
+  res.status(404).render('client/pages/errors/404.pug', {
+    pageTitle: 'Không tìm thấy trang',
+  });
+});
 
 // ── Global error handler ───────────────────────────────────
 app.use((err, req, res, next) => {
   console.error('❌ Server error:', err.stack);
-  res.status(500).render('client/pages/errors/500.pug', {
-    pageTitle: 'Lỗi server',
-  });
+  res.status(500).send('Server error: ' + err.message);
 });
 
-// ── Start server (dev) / Export (Vercel) ───────────────────
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(port, () => {
-    console.log(`✅ Server đang chạy tại http://localhost:${port}`);
-  });
-}
+// ── Start server ───────────────────────────────────────────
+app.listen(port, () => {
+  console.log(`✅ Server đang chạy tại http://localhost:${port}`);
+});
 
 module.exports = app;
