@@ -109,8 +109,7 @@ app.use(methodOverride("_method"));
 
 app.locals.prefixAdmin=systemConfig.prefixAdmin;
 app.locals.moment=moment;
-
-database.connect();
+database.connect().catch(err => console.error('❌ DB Error:', err));
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('views', path.join(__dirname, 'views'));
