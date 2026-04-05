@@ -73,7 +73,7 @@ const methodOverride=require("method-override")
 const bodyParser= require("body-parser");
 const cookieParser=require("cookie-parser");
 const expressSession=require("express-session");
-const MongoStore=require("connect-mongo"); // [+] thêm
+const MongoStore=require("connect-mongo");
 const moment=require("moment");
 const database=require("./config/database");
 
@@ -85,10 +85,12 @@ const port=process.env.PORT || 3000;
 //flash
 app.use(cookieParser("12345"));
 app.use(expressSession({
-    secret:"12345",          // [+] thêm
-    resave:false,            // [+] thêm
-    saveUninitialized:false, // [+] thêm
-    store:MongoStore.create({ mongoUrl:process.env.MONGO_URL, ttl:60*60 }), // [+] thêm
+    secret:"12345",
+    resave:false,
+    saveUninitialized:false,
+    store: process.env.MONGO_URL
+        ? MongoStore.create({ mongoUrl: process.env.MONGO_URL, ttl: 60*60 })
+        : undefined,
     cookie:{maxAge:60000}
 }));
 app.use(flash());
@@ -103,12 +105,13 @@ app.use(bodyParser.urlencoded({extended:true}))
 app.use(express.json());
 //end body-parse
 
-//method 
+//method
 app.use(methodOverride("_method"));
 //end method
 
 app.locals.prefixAdmin=systemConfig.prefixAdmin;
 app.locals.moment=moment;
+
 database.connect().catch(err => console.error('❌ DB Error:', err));
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -119,10 +122,9 @@ app.set("view engine","pug")
 router(app)
 routerAdmin(app)
 
-// [~] đổi app.listen -> chỉ chạy khi local, Vercel dùng module.exports
 if(require.main === module){
     app.listen(port,()=>{
         console.log(`example listening on ${port}`);
     });
 }
-module.exports=app; // [+] thêm
+module.exports=app;
