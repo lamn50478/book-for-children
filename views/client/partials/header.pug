@@ -30,7 +30,10 @@ header.header(role="banner" aria-label="Header chính")
           li
             a(href="/admin/dashboard")
               | Trang admin
+      
           if(user)
+            li 
+              a(href="/chat") Chat
             li  
               a(href="/user/logout") 
                 | Đăng xuất

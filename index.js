@@ -1,5 +1,7 @@
 const express=require('express')
 const app=express()
+const http = require('http');
+const server = http.createServer(app);
 var flash=require('express-flash')
 const path = require('path');
 
@@ -13,6 +15,17 @@ const bodyParser= require("body-parser");
 const cookieParser=require("cookie-parser");
 const expressSession=require("express-session");
 const moment=require("moment");
+
+//socketio
+
+const { Server } = require("socket.io");
+const io = new Server(server);
+global._io=io;//dung cho controller
+// ✅ Thêm vào đây, sau khi _io đã được định nghĩa
+require("./sockets/index.socket.js")(io);
+
+
+//end socketio
 
 const database=require("./config/database");
 //env set
@@ -29,6 +42,8 @@ app.use(flash());
 //tiny mce
 app.use('/tinymce', express.static(path.join(__dirname, 'node_modules', 'tinymce')));
 //end tiny mce
+
+
 
 //body-parse
 app.use(bodyParser.urlencoded({extended:true}))
@@ -52,7 +67,7 @@ router(app)
 routerAdmin(app)
 
 
-app.listen(port,()=>{
+server.listen(port,()=>{
     console.log(`example listening on ${port}`);
 })
 // module.exports=app

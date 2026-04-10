@@ -1,0 +1,36 @@
+extends ../../layouts/default.pug
+include ../../layouts/mixins/box-head.pug
+include ../../layouts/mixins/product-layout.pug
+include ../../layouts/mixins/alert.pug
+
+block head
+    link(rel="stylesheet" href="/css/chat.css")
+
+block main
+    +alert-success(4000)
+    +alert-error(4000)
+    .container.my-5
+        .row
+            .col-12
+                +box-head("chat")
+        .row
+            .col-12
+                .chat(my-id=user.id my-fullname=user.fullName)
+                    .inner-body
+                        each chat in chats
+                            div(class=(chat.user_id==user.id ? "inner-outgoing" : "inner-coming"))
+                                if chat.user_id != user.id && chat.inforUser && chat.inforUser.fullName
+                                    .inner-name #{chat.inforUser.fullName}
+                                .inner-content #{chat.content}
+
+                    .inner-foot
+                        form.inner-form(action="" method="post")
+                            input(type="text" name="content" placeholder="Nhập nội dung..." aria-label="Nội dung tin nhắn")
+                            span.button-icon
+                                
+                                i(class="fa-regular fa-face-grin-tongue")
+                            button
+                                i.fa-solid.fa-paper-plane
+    
+    div(class="tooltip" role="tooltip")
+        emoji-picker(class="light")
