@@ -15,8 +15,9 @@ module.exports.index=async (req,res)=>{
   
     const chats=await Chat.find({
       deleted:false
-    }).limit(10).lean();
-    console.log(chats);
+    }).sort({ createdAt: -1 }).limit(20).lean();
+    
+    chats.reverse();
     for(const chat of chats){
          const inforUser=await User.findOne({
                _id:chat.user_id

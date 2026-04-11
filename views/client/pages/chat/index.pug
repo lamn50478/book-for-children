@@ -22,7 +22,8 @@ block main
                                 if chat.user_id != user.id && chat.inforUser && chat.inforUser.fullName
                                     .inner-name #{chat.inforUser.fullName}
                                 .inner-content #{chat.content}
-
+                        div(class="inner-list-typing")
+                           
                     .inner-foot
                         form.inner-form(action="" method="post")
                             input(type="text" name="content" placeholder="Nhập nội dung..." aria-label="Nội dung tin nhắn")
