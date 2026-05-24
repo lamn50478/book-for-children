@@ -15,8 +15,8 @@ const authController=require("../../controller/admin/auth.controller");
 module.exports=(app)=>{
     const PATH_ADMIN=systemConfig.prefixAdmin;
     
-    app.use(PATH_ADMIN+'/',
-        authController.login);
+    app.get(PATH_ADMIN + '/', authController.login);
+
     app.use(PATH_ADMIN + "/dashboard" ,
         authMiddleware.requireAuth,
         dashboardRouter);
